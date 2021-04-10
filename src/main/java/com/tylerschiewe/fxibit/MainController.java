@@ -13,17 +13,14 @@
 package com.tylerschiewe.fxibit;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyListProperty;
 import javafx.beans.property.ReadOnlyListWrapper;
-import javafx.beans.property.SimpleListProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseButton;
-import javafx.util.Callback;
 
 import java.io.File;
 import java.util.Arrays;

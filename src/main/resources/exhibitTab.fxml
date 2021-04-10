@@ -12,15 +12,14 @@
   ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   -->
 
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.layout.BorderPane?>
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.tylerschiewe.fxibit.MainController">
-    <left>
-        <ListView fx:id="exhibitsListView"/>
-    </left>
-    <center>
-        <fx:include fx:id="viewer" source="viewer.fxml"/>
-    </center>
-</BorderPane>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.StackPane?>
+<fx:root type="javafx.scene.control.Tab" xmlns="http://javafx.com/javafx"
+         xmlns:fx="http://javafx.com/fxml">
+    <SplitPane orientation="VERTICAL">
+        <StackPane fx:id="displayStackPane"/>
+        <TabPane fx:id="viewsTabPane" tabClosingPolicy="UNAVAILABLE"/>
+    </SplitPane>
+</fx:root>

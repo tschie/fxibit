@@ -13,13 +13,19 @@
 package com.tylerschiewe.fxibit;
 
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.beans.property.ReadOnlyListProperty;
+import javafx.beans.property.ReadOnlyListWrapper;
+import javafx.beans.property.SimpleListProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
+import javafx.scene.input.MouseButton;
+import javafx.util.Callback;
 
 import java.io.File;
-import java.lang.reflect.Constructor;
 import java.util.Arrays;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
@@ -32,9 +38,9 @@ public class MainController {
     public ListView<Exhibit> exhibitsListView;
 
     @FXML
-    private StackPane viewer;
+    private ViewerController viewerController;
 
-    private Application currentApp;
+    private final ReadOnlyListWrapper<Exhibit> exhibits = new ReadOnlyListWrapper<>(FXCollections.observableArrayList());
 
     @FXML
     private void initialize() {
@@ -56,7 +62,7 @@ public class MainController {
                                     exhibit.setName(value.toString());
                                 }
                             });
-                            exhibitsListView.getItems().add(exhibit);
+                            exhibits.get().add(exhibit);
                         } catch (Exception ex) {
                             ex.printStackTrace();
                         }
@@ -65,41 +71,34 @@ public class MainController {
             }
         }
 
-        exhibitsListView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                try {
-                    open(newValue);
-                } catch (Exception e) {
-                    e.printStackTrace();
+        exhibitsListView.setCellFactory(param -> new ListCell<>() {
+            protected void updateItem(Exhibit item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item.getName());
+                    setOnMouseClicked(e -> {
+                        if (e.getButton() == MouseButton.PRIMARY && e.isStillSincePress()) {
+                            try {
+                                viewerController.open(item);
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
+                        }
+                    });
                 }
             }
         });
+
+        exhibitsListView.itemsProperty().bind(exhibits);
     }
 
-    public void close() {
-        if (currentApp != null) {
-            try {
-                currentApp.stop();
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                currentApp = null;
-            }
-        }
-        viewer.getChildren().clear();
+    public ObservableList<Exhibit> getExhibits() {
+        return exhibits.get();
     }
 
-    public void open(Exhibit exhibit) throws Exception {
-        close();
-        Constructor<Application>[] constructors = (Constructor<Application>[]) exhibit.getApplicationClass().getDeclaredConstructors();
-        if (constructors.length > 0) {
-            Constructor<Application> constructor = constructors[0];
-            Stage stage = new Stage();
-            currentApp = constructor.newInstance();
-            currentApp.start(stage);
-            stage.toBack();
-            viewer.getChildren().add(stage.getScene().getRoot());
-            stage.close();
-        }
+    public ReadOnlyListProperty<Exhibit> exhibitsProperty() {
+        return exhibits.getReadOnlyProperty();
     }
 }

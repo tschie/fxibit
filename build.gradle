@@ -1,0 +1,84 @@
+/*
+ * Fxibit
+ *
+ * Copyright © 2021 Tyler Schiewe
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+plugins {
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.9'
+    id 'org.beryx.jlink' version '2.23.6'
+}
+
+group 'com.tylerschiewe.fxibit'
+version '0.1'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+javafx {
+    version = "14"
+    modules = [ 'javafx.controls', 'javafx.fxml' ]
+}
+
+application {
+    mainModule.set("com.tylerschiewe.fxibit")
+    mainClassName = "com.tylerschiewe.fxibit.App"
+}
+
+task prepareExamples(type: Copy) {
+    group = "fxibit"
+    description = "Builds examples and copies jars into build/apps"
+    dependsOn gradle.includedBuilds*.task(":jar")
+    gradle.includedBuilds*.each {
+        from "${it.projectDir}/build/libs"
+    }
+    into "$buildDir/apps"
+}
+
+run {
+    dependsOn prepareExamples
+    systemProperty("fxibit.appsDir", "build/apps")
+    systemProperty("java.system.class.loader", "com.tylerschiewe.fxibit.DynamicClassLoader")
+}
+
+jlink {
+    moduleName = "com.tylerschiewe.fxibit"
+    options.set(['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages'])
+    launcher{
+        name = 'Fxibit'
+        jvmArgs = [
+                '-Dfxibit.appsDir=runtime/apps',
+                '-Djava.system.class.loader=com.tylerschiewe.fxibit.DynamicClassLoader'
+        ]
+    }
+}
+
+tasks.jlink.dependsOn prepareExamples
+
+tasks.jlink.doLast {
+    copy {
+        from "build/apps"
+        into "build/image/apps"
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+wrapper {
+    gradleVersion = "6.5"
+}

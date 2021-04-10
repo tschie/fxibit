@@ -51,8 +51,8 @@ jar {
 jlink {
     moduleName = "com.tylerschiewe.fxibit.examples.helloworld"
     options = ['--strip-debug', '--compress', '2', '--no-header-files', '--no-man-pages']
-    launcher{
-        name = 'test'
+    launcher {
+        name = 'Hello World'
     }
 }
 

@@ -63,6 +63,7 @@ public class ExhibitTab extends Tab {
                     application.start(stage);
                     scene = stage.getScene();
                     displayStackPane.getChildren().add(scene.getRoot());
+                    viewsTabPane.getTabs().add(new NodesViewTab(scene));
                     this.setText(stage.getTitle());
                     stage.toBack();
                     stage.close();

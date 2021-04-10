@@ -13,7 +13,6 @@
 package com.tylerschiewe.fxibit.examples.helloworld;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
@@ -29,11 +28,5 @@ public class App extends Application {
         Scene scene = new Scene(stackPane);
         primaryStage.setScene(scene);
         primaryStage.show();
-    }
-
-    @Override
-    public void stop() throws Exception {
-        Platform.exit();
-        System.exit(0);
     }
 }

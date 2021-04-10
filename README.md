@@ -1,2 +1,32 @@
 # fxibit
-A JavaFX app for exhibiting your JavaFX apps
+A JavaFX app for exhibiting your JavaFX apps.
+
+![Screenshot](screenshot.png)
+
+## How it works
+
+Fxibit loads your runnable jars from its apps directory using a dynamic classloader. When you select an app, Fxibit launches the app and embeds its scene in Fxibit's scene.
+
+## Features
+
+-[x] load runnable jars from local directory
+-[x] create native executable using jpackage
+-[ ] add apps at runtime
+-[ ] add apps via drag and drop
+-[ ] add apps from a maven repository
+-[ ] probe app layout using embedded scenic view
+-[ ] view source files included in jar's resources
+
+## Settings
+
+Fxibit uses the following attributes from your jar manifests:
+- `Main-Class` - required for runnable jars, must extend JavaFX `Application` class to work in Fxibit
+- `Application-Name` - name to show in Fxibit, otherwise the classname is shown
+
+Fxibit uses the following system properties:
+- `fxibit.appsDir` - Directory to load apps from at launch
+
+## Tasks
+
+- `run` - Runs Fxibit with the example apps
+- `jpackage` - Creates a native installer

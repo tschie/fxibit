@@ -15,7 +15,9 @@ package com.tylerschiewe.fxibit;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 
 import java.io.File;
@@ -58,6 +60,32 @@ public class MainController {
         });
 
         exhibitsListView.itemsProperty().bind(appsDirectory.exhibitsProperty());
+
+        rootBorderPane.setOnDragOver(e -> {
+            if (e.getGestureSource() != rootBorderPane &&
+                    e.getDragboard().hasFiles() &&
+                    e.getDragboard().getFiles().stream().allMatch(f -> f.isFile() && f.getName().endsWith("jar"))) {
+                e.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+            }
+            e.consume();
+        });
+
+        rootBorderPane.setOnDragDropped(e -> {
+            Dragboard db = e.getDragboard();
+            boolean success = true;
+            if (db.hasFiles()) {
+                for (File f : db.getFiles()) {
+                    try {
+                        appsDirectory.copyExhibit(f);
+                    } catch (Exception exception) {
+                        exception.printStackTrace();
+                        success = false;
+                    }
+                }
+            }
+            e.setDropCompleted(success);
+            e.consume();
+        });
     }
 
     public void teardown() {

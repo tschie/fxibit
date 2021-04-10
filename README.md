@@ -5,7 +5,7 @@ A JavaFX app for exhibiting your JavaFX apps.
 
 ## How it works
 
-Fxibit loads your runnable jars from its apps directory using a dynamic classloader. When you select an app, Fxibit launches the app and embeds its scene in Fxibit's scene.
+Fxibit loads your runnable jars from its apps directory using a URL classloader. When you select an app, Fxibit launches the app in the background and embeds its scene into an Fxibit tab.
 
 ## Features
 

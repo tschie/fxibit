@@ -12,61 +12,30 @@
 
 package com.tylerschiewe.fxibit;
 
-import javafx.application.Application;
-import javafx.beans.property.ReadOnlyListProperty;
-import javafx.beans.property.ReadOnlyListWrapper;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.BorderPane;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
 
 public class MainController {
 
-    private final DynamicClassLoader systemClassLoader = (DynamicClassLoader) ClassLoader.getSystemClassLoader();
+    @FXML
+    private BorderPane rootBorderPane;
 
     @FXML
-    public ListView<Exhibit> exhibitsListView;
+    private ListView<Exhibit> exhibitsListView;
 
     @FXML
     private ViewerController viewerController;
 
-    private final ReadOnlyListWrapper<Exhibit> exhibits = new ReadOnlyListWrapper<>(FXCollections.observableArrayList());
+    private final AppsDirectory appsDirectory = new AppsDirectory(new File(System.getProperty("fxibit.appsDir", "apps")));
 
     @FXML
     private void initialize() {
-        // load samples
-        File jarDirectory = new File(System.getProperty("fxibit.appsDir", "apps"));
-        if (jarDirectory.exists() && jarDirectory.isDirectory()) {
-            File[] files = jarDirectory.listFiles();
-            if (files != null) {
-                Arrays.asList(files).forEach(file -> {
-                    if (file.isFile() && file.getName().endsWith("jar")) {
-                        try {
-                            systemClassLoader.add(file.toPath().toUri().toURL());
-                            Manifest manifest = new JarFile(file).getManifest();
-                            String mainClassName = manifest.getMainAttributes().getValue("Main-Class");
-                            Class<Application> applicationClass = (Class<Application>) systemClassLoader.loadClass(mainClassName);
-                            Exhibit exhibit = new Exhibit(applicationClass);
-                            manifest.getMainAttributes().forEach((key, value) -> {
-                                if ("Application-Name".equals(key.toString())) {
-                                    exhibit.setName(value.toString());
-                                }
-                            });
-                            exhibits.get().add(exhibit);
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                });
-            }
-        }
+        appsDirectory.startWatchingAsync();
 
         exhibitsListView.setCellFactory(param -> new ListCell<>() {
             protected void updateItem(Exhibit item, boolean empty) {
@@ -88,14 +57,10 @@ public class MainController {
             }
         });
 
-        exhibitsListView.itemsProperty().bind(exhibits);
+        exhibitsListView.itemsProperty().bind(appsDirectory.exhibitsProperty());
     }
 
-    public ObservableList<Exhibit> getExhibits() {
-        return exhibits.get();
-    }
-
-    public ReadOnlyListProperty<Exhibit> exhibitsProperty() {
-        return exhibits.getReadOnlyProperty();
+    public void teardown() {
+        appsDirectory.stopWatching();
     }
 }

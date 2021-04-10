@@ -21,12 +21,15 @@ import javafx.stage.Stage;
 
 public class App extends Application {
 
+    private MainController controller;
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setAlwaysOnTop(true);
         primaryStage.setTitle("Fxibit");
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/main.fxml"));
         Parent root = loader.load();
+        controller = loader.getController();
         Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -34,6 +37,7 @@ public class App extends Application {
 
     @Override
     public void stop() throws Exception {
+        controller.teardown();
         Platform.exit();
         System.exit(0);
     }

@@ -16,6 +16,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
+            fx:id="rootBorderPane"
             fx:controller="com.tylerschiewe.fxibit.MainController">
     <left>
         <ListView fx:id="exhibitsListView"/>

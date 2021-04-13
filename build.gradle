@@ -52,7 +52,9 @@ task prepareExamples(type: Copy) {
 
 run {
     dependsOn prepareExamples
+    systemProperty("fxibit.depsDir", "build/deps")
     systemProperty("fxibit.appsDir", "build/apps")
+    systemProperty("java.system.class.loader", "com.tylerschiewe.fxibit.DynamicClassLoader")
 }
 
 jlink {
@@ -61,7 +63,9 @@ jlink {
     launcher{
         name = 'Fxibit'
         jvmArgs = [
-                '-Dfxibit.appsDir=runtime/apps'
+                '-Dfxibit.depsDir=runtime/deps',
+                '-Dfxibit.appsDir=runtime/apps',
+                '-Djava.system.class.loader=com.tylerschiewe.fxibit.DynamicClassLoader'
         ]
     }
 }

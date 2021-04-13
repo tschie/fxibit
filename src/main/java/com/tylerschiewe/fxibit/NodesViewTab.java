@@ -62,7 +62,9 @@ public class NodesViewTab extends Tab  {
             }
         });
 
-        nodeTreeView.setRoot(new NodeTreeItem(scene.getRoot()));
+        NodeTreeItem rootNode = new NodeTreeItem(scene.getRoot());
+        rootNode.setExpanded(true);
+        nodeTreeView.setRoot(rootNode);
     }
 
     public Scene scene() {

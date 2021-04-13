@@ -21,7 +21,6 @@ public class NodeTreeItem extends TreeItem<Node> {
 
     public NodeTreeItem(Node value) {
         super(value);
-        setExpanded(true);
 
         if (value instanceof Parent) {
             ((Parent) value).getChildrenUnmodifiable().addListener((ListChangeListener<Node>) c -> {

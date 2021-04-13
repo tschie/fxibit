@@ -25,7 +25,12 @@ import javafx.scene.layout.BorderPane;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
 public class MainController {
 
@@ -41,10 +46,12 @@ public class MainController {
     @FXML
     private TextField searchField;
 
+    private final DepsDirectory depsDirectory = new DepsDirectory(new File(System.getProperty("fxibit.depsDir", "deps")));
     private final AppsDirectory appsDirectory = new AppsDirectory(new File(System.getProperty("fxibit.appsDir", "apps")));
 
     @FXML
     private void initialize() {
+        depsDirectory.startWatchingAsync();
         appsDirectory.startWatchingAsync();
 
         exhibitsListView.setCellFactory(param -> new ListCell<>() {
@@ -84,27 +91,47 @@ public class MainController {
             e.consume();
         });
 
+        // watch for dropped jars
         rootBorderPane.setOnDragDropped(e -> {
             Dragboard db = e.getDragboard();
             boolean success = true;
             if (db.hasFiles()) {
+                // copy non-runnable jars to deps directory, runnable jars to apps directory
+                List<File> deps = new ArrayList<>();
+                List<File> apps = new ArrayList<>();
                 for (File f : db.getFiles()) {
-                    try {
-                        appsDirectory.copyExhibit(f);
+                    try (JarFile jarFile = new JarFile(f)) {
+
+                        Manifest manifest = jarFile.getManifest();
+                        String mainClassName = manifest.getMainAttributes().getValue("Main-Class");
+                        if (mainClassName != null) {
+                            apps.add(f);
+                        } else {
+                            deps.add(f);
+                        }
                     } catch (Exception exception) {
                         exception.printStackTrace();
                         success = false;
                     }
                 }
+                deps.forEach(dep -> {
+                    try {
+                        depsDirectory.copyDependency(dep);
+                    } catch (IOException ioException) {
+                        ioException.printStackTrace();
+                    }
+                });
+                apps.forEach(app -> {
+                    try {
+                        appsDirectory.copyApp(app);
+                    } catch (IOException ioException) {
+                        ioException.printStackTrace();
+                    }
+                });
             }
             e.setDropCompleted(success);
             e.consume();
         });
-    }
-
-    @FXML
-    private void clearSearch() {
-        searchField.clear();
     }
 
     public void teardown() {

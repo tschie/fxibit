@@ -6,6 +6,7 @@ module com.tylerschiewe.fxibit {
     requires javafx.web;
     requires java.logging;
     requires org.apache.commons.io;
+    requires fuzzywuzzy;
 
     opens com.tylerschiewe.fxibit to javafx.fxml;
 

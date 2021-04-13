@@ -13,14 +13,19 @@
   -->
 
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:id="rootBorderPane"
             fx:controller="com.tylerschiewe.fxibit.MainController"
             stylesheets="@../css/styles.css" prefHeight="600" prefWidth="1000">
     <left>
-        <ListView fx:id="exhibitsListView" prefWidth="200"/>
+        <VBox prefWidth="200">
+            <TextField fx:id="searchField" promptText="Search..."/>
+            <ListView fx:id="exhibitsListView" VBox.vgrow="ALWAYS"/>
+        </VBox>
     </left>
     <center>
         <fx:include fx:id="viewer" source="viewer.fxml"/>

@@ -12,15 +12,20 @@
 
 package com.tylerschiewe.fxibit;
 
+import javafx.beans.binding.Bindings;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TextField;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
+import me.xdrop.fuzzywuzzy.FuzzySearch;
 
 import java.io.File;
+import java.util.Comparator;
 
 public class MainController {
 
@@ -32,6 +37,9 @@ public class MainController {
 
     @FXML
     private ViewerController viewerController;
+
+    @FXML
+    private TextField searchField;
 
     private final AppsDirectory appsDirectory = new AppsDirectory(new File(System.getProperty("fxibit.appsDir", "apps")));
 
@@ -59,7 +67,13 @@ public class MainController {
             }
         });
 
-        exhibitsListView.itemsProperty().bind(appsDirectory.exhibitsProperty());
+        SortedList<Exhibit> searchSortedExhibits = new SortedList<>(appsDirectory.exhibitsProperty());
+
+        searchSortedExhibits.comparatorProperty().bind(Bindings.createObjectBinding(() ->
+                        "".equals(searchField.getText()) ? Comparator.comparing(Exhibit::getName) : Comparator.comparingInt((e) -> 100 - FuzzySearch.weightedRatio(e.getName(), searchField.getText()))
+        , searchField.textProperty()));
+
+        exhibitsListView.setItems(searchSortedExhibits);
 
         rootBorderPane.setOnDragOver(e -> {
             if (e.getGestureSource() != rootBorderPane &&
@@ -86,6 +100,11 @@ public class MainController {
             e.setDropCompleted(success);
             e.consume();
         });
+    }
+
+    @FXML
+    private void clearSearch() {
+        searchField.clear();
     }
 
     public void teardown() {

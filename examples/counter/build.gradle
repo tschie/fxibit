@@ -46,6 +46,8 @@ jar {
                 "Application-Name": "Counter",
         )
     }
+    // include sources
+    from sourceSets.main.allSource
 }
 
 jlink {

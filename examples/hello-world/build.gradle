@@ -46,6 +46,8 @@ jar {
                 "Application-Name": "Hello World",
         )
     }
+    // include sources
+    from sourceSets.main.allSource
 }
 
 jlink {

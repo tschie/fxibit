@@ -24,6 +24,7 @@ Fxibit uses the following attributes from your jar manifests:
 - `Application-Name` - name to show in Fxibit, otherwise the classname is shown
 
 Fxibit uses the following system properties:
+- `fxibit.depsDir` - directory to load non-runnable jar dependencies for your apps
 - `fxibit.appsDir` - directory to load apps from at launch
 
 ## Tasks

@@ -29,8 +29,8 @@ public class ViewerController {
             appTabPane.requestFocus();
         }, () -> {
             ExhibitTab exhibitTab = new ExhibitTab(exhibit);
-            exhibitTab.start();
             appTabPane.getTabs().add(exhibitTab);
+            exhibitTab.start(appTabPane.getScene().getWindow());
             appTabPane.getSelectionModel().select(exhibitTab);
         });
     }

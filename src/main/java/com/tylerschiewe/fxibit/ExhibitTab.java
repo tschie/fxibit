@@ -20,9 +20,12 @@ import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+import javafx.stage.Window;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.util.stream.Collectors;
 
 public class ExhibitTab extends Tab {
 
@@ -36,10 +39,13 @@ public class ExhibitTab extends Tab {
     @FXML
     private TabPane viewsTabPane;
 
+    @FXML
+    private TabPane filesTabPane;
+
     public ExhibitTab(Exhibit exhibit) {
         super();
         this.exhibit = exhibit;
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/exhibitTab.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/exhibitTab.fxml"));
         fxmlLoader.setRoot(this);
         fxmlLoader.setController(this);
         fxmlLoader.setClassLoader(getClass().getClassLoader());
@@ -51,22 +57,26 @@ public class ExhibitTab extends Tab {
         setText(exhibit.getName());
     }
 
-    public void start() {
+    public void start(Window window) {
         if (!started) {
             started = true;
             try {
                 Stage stage = new Stage();
+                stage.initOwner(window);
+                stage.initStyle(StageStyle.UNDECORATED);
                 Constructor<Application>[] constructors = (Constructor<Application>[]) exhibit.getApplicationClass().getDeclaredConstructors();
                 if (constructors.length > 0) {
                     Constructor<Application> constructor = constructors[0];
                     Application application = constructor.newInstance();
+                    application.init();
                     application.start(stage);
                     scene = stage.getScene();
+                    stage.setScene(null);
+                    stage.close();
                     displayStackPane.getChildren().add(scene.getRoot());
                     viewsTabPane.getTabs().add(new NodesViewTab(scene));
+                    filesTabPane.getTabs().addAll(exhibit.getFiles().entrySet().stream().map((e) -> new FileTab(e.getKey(), e.getValue())).collect(Collectors.toList()));
                     this.setText(stage.getTitle());
-                    stage.toBack();
-                    stage.close();
                     setOnCloseRequest(e -> {
                         try {
                             application.stop();

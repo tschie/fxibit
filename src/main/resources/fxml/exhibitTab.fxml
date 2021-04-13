@@ -18,8 +18,11 @@
 <?import javafx.scene.layout.StackPane?>
 <fx:root type="javafx.scene.control.Tab" xmlns="http://javafx.com/javafx"
          xmlns:fx="http://javafx.com/fxml">
-    <SplitPane orientation="VERTICAL">
-        <StackPane fx:id="displayStackPane"/>
-        <TabPane fx:id="viewsTabPane" tabClosingPolicy="UNAVAILABLE"/>
+    <SplitPane dividerPositions="0.7">
+        <SplitPane orientation="VERTICAL" dividerPositions="0.7">
+            <StackPane fx:id="displayStackPane" SplitPane.resizableWithParent="true"/>
+            <TabPane fx:id="filesTabPane" tabClosingPolicy="UNAVAILABLE" prefHeight="200"/>
+        </SplitPane>
+        <TabPane fx:id="viewsTabPane" tabClosingPolicy="UNAVAILABLE" prefWidth="200" SplitPane.resizableWithParent="false"/>
     </SplitPane>
 </fx:root>

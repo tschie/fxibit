@@ -9,14 +9,13 @@ Fxibit loads your runnable jars from its apps directory using a URL classloader.
 
 ## Features
 
-- [x] load runnable jars from local directory
-- [x] create native executable using jpackage
-- [x] open multiple apps in tabs
-- [x] probe app layout using nodes view
-- [x] add apps at runtime
-- [x] add apps via drag and drop
-- [ ] add apps from a maven repository
-- [ ] view source files included in jar's resources
+- load runnable jars from local directory
+- create native executable using jpackage
+- open multiple apps in tabs
+- probe app layout using nodes view
+- add apps at runtime
+- add apps via drag and drop
+- view jar sources (.java, .fxml, .css, .md)
 
 ## Settings
 

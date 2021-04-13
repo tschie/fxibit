@@ -25,9 +25,8 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        primaryStage.setAlwaysOnTop(true);
         primaryStage.setTitle("Fxibit");
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/main.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"));
         Parent root = loader.load();
         controller = loader.getController();
         Scene scene = new Scene(root);

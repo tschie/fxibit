@@ -19,14 +19,16 @@ import javafx.beans.property.ReadOnlyListWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.*;
 import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
+import java.util.regex.Pattern;
 
 public class AppsDirectory {
 
@@ -125,6 +127,19 @@ public class AppsDirectory {
                 Class<Application> applicationClass = (Class<Application>) urlClassLoader.loadClass(mainClassName);
                 Exhibit exhibit = new Exhibit(applicationClass);
                 if (isNewExhibit(exhibit)) {
+                    Pattern sourceFilePattern = Pattern.compile("java|fxml|css|md$");
+                    Enumeration<JarEntry> files = jarFile.entries();
+                    while (files.hasMoreElements()) {
+                        JarEntry sourceEntry = files.nextElement();
+                        if (sourceFilePattern.matcher(sourceEntry.getName()).find()) {
+                            String[] nameParts = sourceEntry.getName().split("\\.");
+                            File tempSourceFile = File.createTempFile(nameParts[0], "." + nameParts[1]);
+                            try (InputStream inputStream = jarFile.getInputStream(sourceEntry)) {
+                                Files.copy(inputStream, tempSourceFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                            }
+                            exhibit.addFile(sourceEntry.getName(), tempSourceFile);
+                        }
+                    }
                     manifest.getMainAttributes().forEach((key, value) -> {
                         if ("Application-Name".equals(key.toString())) {
                             exhibit.setName(value.toString());

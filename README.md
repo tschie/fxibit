@@ -34,4 +34,6 @@ Fxibit uses the following system properties:
 - `run` - runs Fxibit locally with the example apps
 - `jpackage` - creates a native installer
 
+## Screenshot
+
 ![Screenshot](screenshot.png)

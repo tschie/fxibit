@@ -41,7 +41,6 @@ public class DepsDirectory {
                 Arrays.asList(files).forEach(file -> {
                     if (file.isFile() && file.getName().endsWith("jar")) {
                         try {
-                            System.out.println(file.getAbsolutePath());
                             addDep(file);
                         } catch (Exception ex) {
                             ex.printStackTrace();

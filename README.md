@@ -29,6 +29,11 @@ Fxibit uses the following system properties:
 - `fxibit.depsDir` - directory to load non-runnable jar dependencies from and copy to on drag-n-drop
 - `fxibit.appsDir` - directory to load runnable jars from and copy to on drag-n-drop
 
+## Requirements
+
+- JDK 14
+- Gradle 6.5 (use included Gradle wrapper)
+
 ## Tasks
 
 - `run` - runs Fxibit locally with the example apps

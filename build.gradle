@@ -40,6 +40,11 @@ application {
     mainClassName = "com.tylerschiewe.fxibit.App"
 }
 
+task prepareDeps() {
+    mkdir(file("$buildDir/deps"))
+    // copy any jar lib dependencies
+}
+
 task prepareExamples(type: Copy) {
     group = "fxibit"
     description = "Builds examples and copies jars into build/apps"
@@ -73,6 +78,10 @@ jlink {
 tasks.jlink.dependsOn prepareExamples
 
 tasks.jlink.doLast {
+    copy {
+        from "build/deps"
+        into "build/images/deps"
+    }
     copy {
         from "build/apps"
         into "build/image/apps"
